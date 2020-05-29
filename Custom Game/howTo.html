@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title> Menu </title>
+		<script src="https://simplycodingcourses.com/files/simplyjs/simply.js"></script>
+		<script>
+			function start(){
+				sjs.open("target",800,800);
+
+				var background = new sjs.Image("Images/Planet.png");
+				background.setSize(800, 800);
+
+				var playBtn = new sjs.Button("Play", function(x, y){
+					window.location = "CustomGame.html";
+				});
+				playBtn.center().offset(-50, 50);
+
+				var backBtn = new sjs.Button("Back", function(x, y){
+					window.location = "Index.html";
+				});
+				backBtn.center().offset(50, 50);
+
+				var text = new sjs.Text("From the farthest regions of outer space, the Globulans have come to take over Earth!", 20, "white");
+				var text2 = new sjs.Text("You are our last hope, press spacebar to fire your laser weapons at the Globulans ", 18, "white");
+				var text3 = new sjs.Text("but watch out for their viscous attack!", 18, "white");
+				var text4 = new sjs.Text("Once you defeat enough of them, they will have no choice but to send in their mothership.", 18, "white");
+				var text5 = new sjs.Text("However, the hull is too thick for your weapons, but the Globulans it shoots can be knocked back.", 18, "white");
+				var text6 = new sjs.Text("Good Luck!", 20, "white");
+				var text7 = new sjs.Text("Press M to toggle music", 18, "white");
+				text.center().offset(0, -200);
+				text2.center().offset(0, -160);
+				text3.center().offset(0, -120);
+				text4.center().offset(0, -80);
+				text5.center().offset(0, -40);
+				text6.center();
+				text7.center().offset(0, 100);
+
+			}
+		</script>
+	</head>
+	<body onload="start()">
+		<h1> Platform Game </h1>
+
+		<div id="target" style="margin:auto;background:grey;"></div>
+	</body>
+</html>

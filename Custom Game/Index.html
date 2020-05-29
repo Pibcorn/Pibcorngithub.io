@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title> Menu </title>
+		<script src="https://simplycodingcourses.com/files/simplyjs/simply.js"></script>
+		<script>
+			function start(){
+				sjs.open("target",800,800);
+
+				var background = new sjs.Image("Images/Planet.png");
+				background.setSize(800, 800);
+
+				var menuTxt = new sjs.Text("Globulan Attack!", 40, "Black");
+				menuTxt.center().offset(0, -200);
+
+				var playBtn = new sjs.Button("Play", function(x, y){
+					window.location = "CustomGame.html";
+				});
+				playBtn.center();
+
+				var howToBtn = new sjs.Button("How to Play", function(x, y){
+					window.location = "howTo.html";
+				});
+				howToBtn.center().offset(0, 50);
+
+				var madeByTxt = new sjs.Text("Made by Sam Sanderson", 20, "white");
+				madeByTxt.bottom().centerH();
+
+			}
+		</script>
+	</head>
+	<body onload="start()">
+		<h1> Platform Game </h1>
+
+		<div id="target" style="margin:auto;background:grey;"></div>
+	</body>
+</html>

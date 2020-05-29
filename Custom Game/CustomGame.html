@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title> Custom Game </title>
+		<script src="https://simplycodingcourses.com/files/simplyjs/simply.js"></script>
+		<script>
+			function start(){
+				sjs.open("target",600,980);
+				
+				//Background
+				var background = new sjs.Image("Images/Stars.gif");
+				background.setSize(600, 980);
+
+				//Background Music
+				var music =  new Audio("Music/2019-12-11_-_Retro_Platforming_-_David_Fesliyan.mp3");
+				var toggle = true;
+				var musicOn = false;
+
+				sjs.keyDown(M_KEY, function(){
+					if(toggle == true){
+						if(musicOn == false){
+							music.play();
+							musicOn = true;
+						} else {
+							music.pause();
+							musicOn = false;
+						}
+						toggle = false;
+						setTimeout(function(){
+							toggle = true
+						}, 1000);
+					}
+				});				
+
+				//Player Spaceship
+				var player = new sjs.Image("Images/Ship.png");
+				player.type = "player";
+				player.setSize(51, 33);
+				player.friction = .4;
+				player.noBounds = true;
+				player.setGravity(0);
+				player.center();
+
+
+
+				//Enemy Creation
+				var enemyCount = 0;
+		        var maxEnemies = 10;
+		        
+		        setInterval(function(){
+		          if (enemyCount < maxEnemies) {
+		            var enemy = new sjs.Image("Images/Alien.png");
+		            enemyCount = enemyCount + 1;					
+		            console.log("creating enemy, count = " + enemyCount);
+		            
+		            enemy.type = "enemy";
+		            enemy.setSize(58, 58);
+		            enemy.friction = 0;
+		            enemy.noBounds = true;
+		            enemy.setGravity(0);
+		            enemy.moveTo(Math.random()*(enemy.getClamp().x), Math.round(Math.random()*7)*enemy.getWidth());
+		            enemy.globInterval = setInterval(function(){
+		              var glob = new sjs.Image("Images/Glob.png");
+		              glob.type = "glob";
+		              glob.setSize(12, 12);
+		              glob.friction = 0;
+		              glob.noBounds = true;
+		              glob.setGravity(0);
+		              glob.moveTo(enemy.getX()+24, enemy.getY()+28);
+		              glob.pushDown(5);
+		            }, 2000);
+		          }
+		        }, 1000);
+				
+
+
+				//KeyDown Functions
+				sjs.keyDown(LEFT_KEY, function(){
+					player.pushLeft(5);
+				});
+
+				sjs.keyDown(RIGHT_KEY, function(){
+					player.pushRight(5);
+				});
+
+				sjs.keyDown(DOWN_KEY, function(){
+					player.pushDown(5);
+				});
+
+				sjs.keyDown(UP_KEY, function(){
+					player.pushUp(5);
+				});
+
+				canShoot = true;
+				sjs.keyDown(SPACE_KEY, function(){
+					if(canShoot == true){
+						canShoot = false;
+						var laser = new sjs.Image("Images/laser.png");
+						laser.type = "laser";
+						laser.setSize(20,28);
+						laser.friction = 0;
+						laser.noBounds = true;
+						laser.moveTo(player.getX(), player.getY()+-20);
+						laser.pushUp(20);
+
+						var laser2 = new sjs.Image("Images/laser.png");
+						laser2.type = "laser";
+						laser2.setSize(20, 28);
+						laser2.friction = 0;
+						laser2.noBounds = true;
+						laser2.moveTo(player.getX()+31, player.getY()+ -20);
+						laser2.pushUp(20);
+						setTimeout(function(){
+							canShoot = true;
+						}, 500);
+					}
+				});
+
+
+		
+
+				//Score
+				var score = 0;
+				var scoreTxt = new sjs.Text("Score: 0", 21, "green");
+				scoreTxt.type = "score";
+				scoreTxt.right().offset(-20, 0);
+				scoreTxt.fixed = true;		
+
+
+				//Boss HP
+				var bossHealth1 = 5;
+				var bossHealth2 = 5;
+
+				//OnHit Functions
+				sjs.onHit("player", ["right_screen", "left_screen", "top_screen", "bottom_screen"], function(x, y){
+					sjs.stoppedBy(x, y);
+				});
+
+				sjs.onHit("laser","top_screen", function(x, y){
+					x.destroy();
+				});
+
+				sjs.onHit("score", "enemy", function(x, y){
+					clearInterval(y.globInterval);
+					y.destroy();
+					enemyCount = enemyCount - 1;
+				});				
+
+				sjs.onHit("enemy", "enemy", function(x, y){
+					clearInterval(y.globInterval);
+					y.destroy();
+					enemyCount = enemyCount - 1;
+				});
+
+				sjs.onHit("player", "enemy", function(x, y){
+					x.destroy();
+					window.location = "gameover.html";
+				});
+
+				sjs.onHit("laser", "enemy", function(x, y){
+					clearInterval(y.globInterval);					
+					y.destroy();
+					x.destroy();
+					enemyCount = enemyCount - 1;
+					score = score + 1;
+					scoreTxt.setText("Score: "+ score);
+					localStorage.setItem("score", score);
+					if(score == 10){
+						var boss = new sjs.Image("Images/Boss.png");
+						boss.type = "boss";
+						boss.noBounds = true;
+						boss.setSize(600, 852);
+						boss.top().center().offset(0, -850);
+						boss.friction = 1;						
+						boss.moveInterval = setInterval(function(){
+							boss.pushDown(10);
+						}, 1000);
+
+						boss.leftGunInterval = setInterval(function(){
+							var spin = new sjs.Image("Images/Spin.gif");
+							spin.type = "projectile1";
+							spin.noBounds = true;
+							spin.friction = 0;
+							spin.setSize(58, 58);
+							spin.moveTo(boss.getX()+40, boss.getY()+855);
+							spin.pushDown(10);
+						}, 1500);
+						
+						boss.rightGunInterval = setInterval(function(){	
+							var spin2 = new sjs.Image("Images/Spin.gif");
+							spin2.type = "projectile2";
+							spin2.noBounds = true;
+							spin2.friction = 0;
+							spin2.setSize(58, 58);
+							spin2.moveTo(boss.getX()+500, boss.getY()+855);
+							spin2.pushDown(10);					
+						}, 1500);															
+					};					
+				});
+
+
+				sjs.onHit("projectile", ["right_screen", "left_screen", "bottom_screen"], function(x, y){
+					x.destroy();
+				});
+
+
+				sjs.onHit("laser", "boss", function(x, y){
+					x.destroy();
+				});
+
+				sjs.onHit("boss", "enemy", function(x, y){
+					clearInterval(y.globInterval);
+					y.destroy();
+					enemyCount = enemyCount - 1;
+				})
+
+				sjs.onHit("laser", ["projectile1", "projectile2"], function(x, y){
+					x.destroy();
+					y.pushUp(20);
+				});
+
+				sjs.onHit("player", ["projectile1", "projectile2"], function(x, y){
+					x.destroy();
+					window.location = "gameover.html";
+				});				
+
+				sjs.onHit("projectile1", "boss", function(x, y){
+					x.destroy();
+					bossHealth1 = bossHealth1 - 1;
+					if (bossHealth1 == 0){
+						clearInterval(y.leftGunInterval);
+						y.setImage("Images/LeftGunOut.png");
+					};
+
+					if (bossHealth1 == 0 && bossHealth2 == 0){
+						y.setImage("Images/DefeatBoss.gif");
+						clearInterval(y.moveInterval);
+						setTimeout(function(){
+							window.location = "win.html";
+						}, 2000);
+					}
+				});
+
+				sjs.onHit("projectile2", "boss", function(x, y){
+					x.destroy();
+					bossHealth2 = bossHealth2 - 1;
+					if (bossHealth2 == 0){
+						clearInterval(y.rightGunInterval);
+						y.setImage("Images/RightGunOut.png");
+					};
+
+					if (bossHealth1 == 0 && bossHealth2 == 0){
+						y.setImage("Images/DefeatBoss.gif");
+						clearInterval(y.moveInterval);
+						setTimeout(function(){
+							window.location = "win.html";
+						}, 1000);
+					}
+				});			
+
+				sjs.onHit("player", "boss", function(x, y){
+					x.destroy();
+					window.location = "gameover.html";
+				});
+
+				sjs.onHit("glob", "bottom_screen", function(x, y){
+					x.destroy();
+				});
+
+				sjs.onHit("glob", "player", function(x, y){
+					y.destroy();
+					window.location = "gameover.html";
+				});
+
+
+			}
+		</script>
+	</head>
+	<body onload="start()">
+		<h1> Custom Game </h1>
+
+		<div id="target" style="margin:auto;background:grey;"></div>
+	</body>
+</html>

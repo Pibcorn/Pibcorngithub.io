@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title> Win </title>
+		<script src="https://simplycodingcourses.com/files/simplyjs/simply.js"></script>
+		<script>
+			function start(){
+				sjs.open("target", 500, 400);
+				var winTxt = new sjs.Text("You Win!", 44, "blue");
+				winTxt.center().offset(0, -50);
+
+				var text = new sjs.Text("Thank you for playing!", 20, "white");
+				text.center().offset(0, 40);
+
+				var playAgainBtn = new sjs.Button("Play Again", function(x, y){
+					window.location = "Index.html";
+				});
+				playAgainBtn.center();
+
+				var scoreTxt = new sjs.Text("Score: 0", 21, "orange");
+				scoreTxt.setText("Score: " +localStorage.getItem("score"));
+
+				var ship = new sjs.Image("Images/ship.png");
+				ship.bottom().centerH().offset(-25.5, -100);
+
+				var ship2 = new sjs.Image("Images/ship.png");
+				ship2.bottom().centerH().offset(74.5, 0);
+
+				var ship3 = new sjs.Image("Images/ship.png");
+				ship3.bottom().centerH().offset(-125.5, 0);
+
+				var ship4 = new sjs.Image("Images/ship.png");
+				ship4.bottom().centerH().offset(174.5, -100);
+
+				var ship5 = new sjs.Image("Images/ship.png");
+				ship5.bottom().centerH().offset(-225.5, -100);	
+
+			}
+		</script>
+	</head>
+	<body onload="start()">
+		<h1> You Win! </h1>
+
+		<div id="target" style="margin:auto;background:grey;"></div>
+	</body>
+</html>
